@@ -1,0 +1,67 @@
+/* Create table about the people and what they do here */
+/*This SQL project name in Khan Academy is 'Project: Famous People'. The original goal was to create a list of 
+famous people within readable lists and extract relational information. These tables list actors, movies, 
+and data related to both such as age, box office sales, etc*/ 
+/*NOTE: Khan Academy's UI dynamically executes the code to immediately display results. The flow may be different
+from other databases where as these queries may be in seperate tabs in MySQL.*/
+
+/*LINE 58 BEGINS THE QUERY THAT FOCUSES ON MY MAIN GOAL FOR THIS PROJECT*/
+
+/*Creates a small list of actors with their age*/
+CREATE TABLE moviestars (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);
+
+INSERT INTO moviestars VALUES (1, 'Bruce Willis', 67);
+INSERT INTO moviestars VALUES(2, 'Keauna Reeves', 
+57);
+INSERT INTO moviestars VALUES(3, 'Neil Patrick Harris', 48);
+INSERT INTO moviestars VALUES(4, 'Chris Hemsworth', 38);
+INSERT INTO moviestars VALUES(5, 'Nicole Kidman', 54);
+INSERT INTO moviestars VALUES(6, 'Victoria Pedretti', 27);
+INSERT INTO moviestars VALUES(7, 'Anya Taylor-Joy', 25);
+
+SELECT * FROM moviestars;
+
+/*Creates a table of movies, release year, and relational ids for the other tables*/
+CREATE TABLE movies (id INTEGER PRIMARY KEY AUTOINCREMENT, movieid INTEGER, starid INTEGER, mname TEXT, year INTEGER);
+
+INSERT INTO movies VALUES(1, 12, 1, 'Sixth Sense', 1999);
+INSERT INTO movies VALUES(2, 14, 1, 'Armageddon', 1998);
+INSERT INTO movies VALUES (3, 13, 1, 'Glass', 2019);
+INSERT INTO movies VALUES(4, 13, 7, 'Glass', 2019);
+INSERT INTO movies VALUES(5, 20, 3, 'Starship Troopers', 1997);
+INSERT INTO movies VALUES(6, 32, 4, 'Thor', 2011);
+INSERT INTO movies VALUES(7, 4, 4, 'Thor Dark World', 2013);
+INSERT INTO movies VALUES(8, 101, 5, 'Bewitched', 2005);
+
+SELECT * from movies;
+
+/*Creates a table of domestic and international box office sales to relate to the 'movies' table. I did not use this table but may in the future.*/
+CREATE TABLE gross (id INTEGER PRIMARY KEY AUTOINCREMENT, movieid INTEGER, domestic INTEGER, intern INTEGER);
+
+INSERT INTO gross VALUES(1, 10, 293506292, 379300000);
+INSERT INTO gross VALUES(2, 12, 201578182, 353021818);
+INSERT INTO gross VALUES(3, 18, 111048468, 246999039);
+INSERT INTO gross VALUES(4, 20, 54768952, 66331048);
+INSERT INTO gross VALUES(5, 32, 181030624, 268295994);
+INSERT INTO gross VALUES(6, 4, 206362140, 438240376);
+INSERT INTO gross VALUES(7, 101, 63313159, 67846147);
+
+SELECT * FROM gross;
+
+
+/*Table manipulations start here*/
+
+/*Youngest 4 Actors - This simply achieves the goal of the Khan Acadmey project. Easy*/
+
+SELECT name, age FROM moviestars ORDER BY age ASC LIMIT 4;
+
+/*Lets find Costars - I wanted to distinctly call duplicate movie title data while joining it to the seperate actors' and actresses' names.*/
+/*My goal was to call Bruce Willis and Anya Taylor-Joy to be listed alongside the movie "Glass". That is "Glass" is unique in that it relates to two seperate values in the moviestars.id column*/
+/*I used a Google search to find a similar scenario on Stack Overflow and applied the concept to this query. More information by the JOIN statement*/
+
+SELECT ms1.name, mov1.mname, mov1.movieid
+FROM movies AS mov1
+
+/*This JOIN's ON statement uses the relational ids  
+INNER JOIN moviestars AS ms1
+ON ms1.id = mov1.starid AND mov1.mname IN (SELECT mov1.mname FROM movies AS mov1 GROUP BY mov1.mname HAVING COUNT(mov1.mname) > 1);
